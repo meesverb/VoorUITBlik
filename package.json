@@ -1,0 +1,11 @@
+{
+  "name": "vooruitblik",
+  "version": "1.0.0",
+  "description": "Vooruitblik race day site",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
