@@ -1,11 +1,999 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Vooruitblik Desktop</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voor UIT Blik - Triton Zomerwedstrijden</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        :root {
+            --bg-color: #0B3948;
+            --bg-light: #225E6A;
+            --card-bg: #FFFFFF;
+            --text-dark: #072A35;
+            --text-light: #F0F4F8;
+            --accent-gold: #F3A62E;
+            --accent-orange: #EC7A2E;
+            --accent-red: #D94A4A;
+            --border-color: rgba(243, 166, 46, 0.3);
+            --shadow-color: rgba(11, 57, 72, 0.2);
+            --success-color: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(160deg, var(--bg-color) 0%, var(--bg-light) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-container {
+            max-width: 100vw;
+            height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .header-title .main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        .title-voor { color: var(--text-light); }
+        .title-uit { color: var(--accent-gold); }
+        .title-blik { color: var(--accent-orange); }
+        .header-title .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #nav-dropdown {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            padding: 10px 18px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 220px;
+        }
+        
+        #fullscreen-btn {
+            background: var(--accent-gold);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        #fullscreen-btn:hover {
+            background: var(--accent-orange);
+        }
+
+        #content-area {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content { 
+            display: none; 
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            flex: 1;
+            overflow: hidden;
+        }
+        .tab-content.active { 
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+        }
+
+        .section-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin: 0 0 15px 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* TV-optimized results grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            flex: 1;
+            overflow: hidden;
+            align-content: start;
+            padding: 5px;
+        }
+
+        .race-table-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-height: calc((100vh - 220px) / 3); /* Ensure 3 rows fit */
+        }
+
+        .race-title {
+            background: var(--accent-orange);
+            color: var(--text-dark);
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-dark);
+            font-size: 0.75rem;
+            flex: 1;
+        }
+        
+        .results-table thead { 
+            background: var(--accent-gold); 
+        }
+        
+        .results-table th {
+            color: var(--text-dark);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            font-size: 0.7rem;
+            padding: 6px 8px;
+            text-align: center;
+        }
+        
+        .results-table tbody tr { 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .results-table tbody tr:last-child { 
+            border-bottom: none; 
+        }
+        
+        .results-table td { 
+            padding: 6px 8px; 
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .position-cell { 
+            font-weight: 700; 
+            font-size: 0.85rem; 
+            color: var(--accent-orange); 
+        }
+        
+        .name-cell { 
+            font-weight: 600; 
+            text-align: left;
+            font-size: 0.8rem;
+        }
+        
+        .time-cell { 
+            font-family: 'Menlo', 'Monaco', monospace; 
+            font-weight: 600; 
+            color: var(--success-color); 
+            font-size: 0.8rem;
+        }
+        
+        .status-in-race { 
+            color: var(--accent-red); 
+            font-weight: 700; 
+            animation: pulse 2s infinite; 
+            font-size: 0.8rem;
+        }
+        
+        @keyframes pulse { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.6; } 
+        }
+
+        /* Knockout Bracket - TV Optimized */
+        .knockout-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 10px;
+            flex: 1;
+            overflow: hidden;
+            align-items: flex-start;
+            max-height: calc(100vh - 200px);
+        }
+        
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-width: 180px;
+            flex: 1;
+            max-width: 250px;
+            gap: 8px;
+        }
+        
+        .round-title { 
+            text-align: center; 
+            font-weight: 700; 
+            color: var(--accent-gold); 
+            margin-bottom: 10px; 
+            font-size: 0.95rem; 
+            background: rgba(243, 166, 46, 0.1);
+            padding: 6px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        
+        .match {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 3px 12px var(--shadow-color);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-bottom: 6px;
+        }
+        
+        .match:hover {
+            border-color: var(--accent-gold);
+        }
+        
+        .team { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 4px 0; 
+            font-size: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .team:last-child {
+            border-bottom: none;
+        }
+        
+        .team.winner { 
+            font-weight: 700; 
+            color: var(--accent-gold); 
+            background: rgba(243, 166, 46, 0.1);
+            border-radius: 3px;
+            padding: 4px 6px;
+            margin: 1px 0;
+        }
+
+        .team-name {
+            flex: 1;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .team-time {
+            font-family: 'Menlo', 'Monaco', monospace;
+            font-weight: 600;
+            color: var(--success-color);
+            margin-left: 6px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        
+        /* Connecting lines for bracket - removed for cleaner TV display */
+        .bracket-separator {
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-gold), var(--accent-orange));
+            margin: 0 8px;
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+        
+        /* Hub Tab - TV Optimized */
+        .hub-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            flex: 1;
+            align-content: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .hub-card {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            text-align: center;
+        }
+        
+        .stat-card .stat-number { 
+            font-size: 2.8rem; 
+            font-weight: 700; 
+            color: var(--accent-orange); 
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .stat-label { 
+            font-size: 1rem; 
+            color: var(--text-dark); 
+            opacity: 0.8; 
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .current-races-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            flex: 1;
+            align-content: start;
+        }
+
+        .live-race-card {
+            background: linear-gradient(135deg, var(--accent-red), #ff6b6b);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 24px rgba(217, 74, 74, 0.3);
+            animation: liveGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes liveGlow {
+            from { box-shadow: 0 6px 24px rgba(217, 74, 74, 0.3); }
+            to { box-shadow: 0 8px 32px rgba(217, 74, 74, 0.6); }
+        }
+
+        .live-race-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .live-participants {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .live-participant {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* No scroll message */
+        .no-scroll-message {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        /* Responsive TV optimization */
+        @media (min-width: 1920px) {
+            .results-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 10px;
+            }
+            .section-header {
+                font-size: 2rem;
+            }
+        }
+
+        @media (min-width: 1400px) and (max-width: 1919px) {
+            .results-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 1000px) and (max-width: 1399px) {
+            .results-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 999px) {
+            .results-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .knockout-container {
+                gap: 15px;
+            }
+            .round {
+                min-width: 150px;
+            }
+            .race-table-container {
+                max-height: calc((100vh - 220px) / 2);
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Desktop version</h1>
-  <p>Replace this with your real desktop HTML.</p>
+
+<div class="main-container">
+    <header>
+        <div class="header-title">
+            <h1 class="main-title">
+                <span class="title-voor">Voor</span><span class="title-uit">UIT</span><span class="title-blik">Blik</span>
+            </h1>
+            <p class="subtitle">Triton Zomerwedstrijden</p>
+        </div>
+        <div class="header-controls">
+            <select id="nav-dropdown"></select>
+            <button id="fullscreen-btn" title="Volledig scherm">⛶</button>
+        </div>
+    </header>
+    
+    <div id="content-area"></div>
+</div>
+
+<script>
+    const API_URL = 'https://ethernet-training-annually-fa.trycloudflare.com/data';
+    const contentArea = document.getElementById('content-area');
+    const navDropdown = document.getElementById('nav-dropdown');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    
+    let currentTabId = localStorage.getItem('selectedTab') || 'recent';
+
+    // Fallback data
+    const fallbackData = {"results":[{"Header":"4+ Voorwedstrijd 1"},{"Rank":" ","Name":"Triton 1","Bib nr":"1","baan":"Binnen","Result":"6:40.3","Diff_3":""},{"Rank":" ","Name":"Nereus 1","Bib nr":"2","baan":"Buiten","Result":"6:45.9","Diff_3":"+5.6"},{"Header":"4+ Voorwedstrijd 2"},{"Rank":" ","Name":"Laga 1","Bib nr":"7","baan":"Buiten","Result":"6:50.1","Diff_3":""},{"Rank":" ","Name":"Skadi 1","Bib nr":"8","baan":"Binnen","Result":"6:52.3","Diff_3":"+2.2"},{"Header":"1x Voorwedstrijd 1"},{"Rank":" ","Name":"Koen Metsemakers","Bib nr":"3","baan":"Buiten ","Result":"7:10.4","Diff_3":""},{"Rank":" ","Name":"Simon van Dorp","Bib nr":"4","baan":"Binnen","Result":"7:12.8","Diff_3":"+2.4"},{"Header":"2x Halve Finale 1"},{"Rank":" ","Name":"Triton 2x","Bib nr":"5","baan":"Binnen","Result":"In race...","Diff_3":""},{"Rank":" ","Name":"Nereus 2x","Bib nr":"6","baan":"Buiten","Result":"In race...","Diff_3":""}]};
+
+    function openTab(tabId) {
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab) {
+            activeTab.style.opacity = '0';
+            setTimeout(() => {
+                activeTab.classList.remove('active');
+                const newTab = document.getElementById(tabId);
+                if (newTab) {
+                    newTab.classList.add('active');
+                    setTimeout(() => {
+                        newTab.style.opacity = '1';
+                    }, 50);
+                }
+            }, 150);
+        } else {
+            const newTab = document.getElementById(tabId);
+            if (newTab) {
+                newTab.classList.add('active');
+                newTab.style.opacity = '1';
+            }
+        }
+        
+        currentTabId = tabId;
+        localStorage.setItem('selectedTab', tabId);
+    }
+
+    function createResultTable(races, title) {
+        if (races.length === 0) {
+            return `<h2 class="section-header">${title}</h2><div class="no-scroll-message">Geen data beschikbaar voor deze selectie.</div>`;
+        }
+
+        let html = `<h2 class="section-header">${title}</h2><div class="results-grid">`;
+        
+        races.forEach(race => {
+            html += `
+                <div class="race-table-container">
+                    <div class="race-title">${race.name}</div>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Naam</th>
+                                <th>Bib</th>
+                                <th>Tijd</th>
+                                <th>+/-</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            race.results.forEach((p, index) => {
+                const isRacing = p.Result.includes('race');
+                const time = parseTimeToSeconds(p.Result);
+                html += `
+                    <tr>
+                        <td class="position-cell">${isRacing || time === Infinity ? '-' : index + 1}</td>
+                        <td class="name-cell">${p.Name}</td>
+                        <td>${p['Bib nr']}</td>
+                        <td class="${isRacing ? 'status-in-race' : 'time-cell'}">${p.Result}</td>
+                        <td>${p.Diff_3}</td>
+                    </tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+        });
+        
+        html += `</div>`;
+        return html;
+    }
+
+function createLiveRacesContent(allRaces) {
+  const liveRaces = allRaces.filter(race =>
+    race.results.some(r => r.Result === "In race...")
+  );
+
+  if (liveRaces.length === 0) {
+    return `
+      <h2 class="section-header">Live Races</h2>
+      <div class="no-scroll-message">
+        <p style="font-size: 1.5rem;">Geen actieve races op dit moment</p>
+        <p style="font-size: 1.1rem; margin-top: 10px; opacity: 0.8;">Check terug voor live updates tijdens de wedstrijden</p>
+      </div>
+    `;
+  }
+
+  let html = `<h2 class="section-header">🔴 Live Races</h2>`;
+
+  liveRaces.forEach((race) => {
+    const activeRow = race.results.find(r => r.Result === "In race...");
+    const startTime = activeRow?.Start || '';
+
+    html += `
+      <div class="race-table-container" style="width: 100%; max-width: none; padding: 2rem; background-color: var(--panel-bg); border-radius: 1rem; box-shadow: 0 0 20px rgba(0,0,0,0.3); margin-bottom: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div class="race-title" style="font-size: 2.5rem; font-weight: 800;">${race.name}</div>
+          <div class="live-race-clock" style="font-size: 1.8rem; color: var(--accent-red); font-weight: bold;">
+            ⏱️ Tijd bezig: <span class="live-race-timer" data-race="${race.name}" data-start="${startTime}">00:00</span>
+          </div>
+        </div>
+
+        <table class="results-table" style="font-size: 1.4rem; width: 100%;">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Naam</th>
+              <th>Bib</th>
+              <th>Baan</th>
+              <th>Tijd</th>
+              <th>+/-</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    race.results.forEach((row) => {
+      const timeClass = row.Result.includes("race") ? "status-in-race" : "time-cell";
+      html += `
+        <tr>
+          <td class="position-cell">-</td>
+          <td class="name-cell">${row.Name}</td>
+          <td>${row["Bib nr"]}</td>
+          <td>${row.baan}</td>
+          <td class="${timeClass}">${row.Result}</td>
+          <td>${row.Diff_3}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table></div>`;
+  });
+
+  return html;
+}
+
+
+
+    
+    function parseTimeToSeconds(timeStr) {
+        if (!timeStr || !/\d/.test(timeStr) || timeStr.includes('race')) return Infinity;
+        const parts = timeStr.split(':').reverse();
+        let seconds = 0;
+        if (parts[0]) seconds += parseFloat(parts[0]);
+        if (parts[1]) seconds += parseInt(parts[1], 10) * 60;
+        if (parts[2]) seconds += parseInt(parts[2], 10) * 3600;
+        return seconds;
+    }
+    
+    function createHubContent(allRaces) {
+        let fastestTime = Infinity;
+        let fastestRower = '';
+        let fastestRace = '';
+        const completedRaces = allRaces.filter(r => r.isComplete);
+        
+        completedRaces.forEach(race => {
+            race.results.forEach(result => {
+                const time = parseTimeToSeconds(result.Result);
+                if (time < fastestTime) {
+                    fastestTime = time;
+                    fastestRower = result.Name;
+                    fastestRace = race.name;
+                }
+            });
+        });
+        
+        const formatTime = (seconds) => {
+            if (seconds === Infinity) return 'N/A';
+            const mins = Math.floor(seconds / 60);
+            const secs = (seconds % 60).toFixed(2);
+            return `${mins}:${secs.padStart(5, '0')}`;
+        };
+
+        const totalRaces = allRaces.length;
+        const completedCount = completedRaces.length;
+        const liveCount = allRaces.filter(r => !r.isComplete).length;
+
+        return `
+            <h2 class="section-header">Wedstrijd Dashboard</h2>
+            <div class="hub-container">
+                <div class="hub-card stat-card">
+                    <div class="stat-number">${formatTime(fastestTime)}</div>
+                    <div class="stat-label">Snelste Tijd</div>
+                    ${fastestRower ? `<div class="stat-name">${fastestRower}</div>` : ''}
+                    ${fastestRace ? `<div style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">${fastestRace}</div>` : ''}
+                </div>
+                <div class="hub-card stat-card">
+                    <div class="stat-number">${completedCount}/${totalRaces}</div>
+                    <div class="stat-label">Voltooide Races</div>
+                </div>
+                <div class="hub-card stat-card">
+                    <div class="stat-number">${liveCount}</div>
+                    <div class="stat-label">Live Races</div>
+                </div>
+            </div>
+        `;
+    }
+
+function generateBracketForType(boatType, allRaces) {
+    let html = `<h2 class="section-header">Knock-out Schema - ${boatType}</h2>`;
+
+    const heats = allRaces.filter(r => r.name.startsWith(boatType) && r.name.toLowerCase().includes('voorwedstrijd')).sort((a, b) => a.name.localeCompare(b.name));
+    const semis = allRaces.filter(r => r.name.startsWith(boatType) && r.name.toLowerCase().includes('halve finale')).sort((a, b) => a.name.localeCompare(b.name));
+    const final = allRaces.find(r => r.name.startsWith(boatType) && r.name.toLowerCase().includes('finale') && !r.name.toLowerCase().includes('halve'));
+
+    const getWinner = (race) => {
+        if (!race || !race.isComplete || race.results.length === 0) return null;
+        return race.results[0];
+    };
+
+    const formatTime = (result) => {
+        if (!result || !result.Result || result.Result.includes('race')) return '';
+        return result.Result;
+    };
+
+    html += `<div class="knockout-container">`;
+
+    // Voorwedstrijden
+    html += `<div class="round">
+                <div class="round-title">Voorwedstrijden</div>`;
+
+    for(let i = 0; i < Math.max(4, heats.length); i++) {
+        const heat = heats[i];
+        if (heat && heat.results.length >= 2) {
+            const winner = getWinner(heat);
+            const team1 = heat.results[0];
+            const team2 = heat.results[1];
+
+            html += `<div class="match">
+                        <div class="team ${winner && winner.Name === team1.Name ? 'winner' : ''}">
+                            <span class="team-name">${team1.Name}</span>
+                            <span class="team-time">${formatTime(team1)}</span>
+                        </div>
+                        <div class="team ${winner && winner.Name === team2.Name ? 'winner' : ''}">
+                            <span class="team-name">${team2.Name}</span>
+                            <span class="team-time">${formatTime(team2)}</span>
+                        </div>
+                     </div>`;
+        } else {
+            html += `<div class="match">
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                        </div>
+                     </div>`;
+        }
+    }
+    html += `</div>`;
+
+    // Halve Finales
+    html += `<div class="round">
+                <div class="round-title">Halve Finales</div>`;
+
+    for(let i = 0; i < Math.max(2, semis.length); i++) {
+        const semi = semis[i];
+
+        const team1Name = (semi?.results?.[0]?.Name && semi.results[0].Name !== '') ? semi.results[0].Name : 'TBD';
+        const team2Name = (semi?.results?.[1]?.Name && semi.results[1].Name !== '') ? semi.results[1].Name : 'TBD';
+
+        let team1Result = semi?.results?.find(r => r.Name === team1Name);
+        let team2Result = semi?.results?.find(r => r.Name === team2Name);
+        const winner = getWinner(semi);
+
+        html += `<div class="match">
+                    <div class="team ${winner && winner.Name === team1Name ? 'winner' : ''}">
+                        <span class="team-name">${team1Name}</span>
+                        <span class="team-time">${formatTime(team1Result)}</span>
+                    </div>
+                    <div class="team ${winner && winner.Name === team2Name ? 'winner' : ''}">
+                        <span class="team-name">${team2Name}</span>
+                        <span class="team-time">${formatTime(team2Result)}</span>
+                    </div>
+                 </div>`;
+    }
+    html += `</div>`;
+
+    // Finale
+    html += `<div class="round">
+                <div class="round-title">Finale</div>`;
+
+    const team1Name = (final?.results?.[0]?.Name && final.results[0].Name !== '') ? final.results[0].Name : 'TBD';
+    const team2Name = (final?.results?.[1]?.Name && final.results[1].Name !== '') ? final.results[1].Name : 'TBD';
+
+    let team1Result = final?.results?.find(r => r.Name === team1Name);
+    let team2Result = final?.results?.find(r => r.Name === team2Name);
+    const finalWinner = getWinner(final);
+
+    html += `<div class="match">
+                <div class="team ${finalWinner && finalWinner.Name === team1Name ? 'winner' : ''}">
+                    <span class="team-name">${team1Name}</span>
+                    <span class="team-time">${formatTime(team1Result)}</span>
+                </div>
+                <div class="team ${finalWinner && finalWinner.Name === team2Name ? 'winner' : ''}">
+                    <span class="team-name">${team2Name}</span>
+                    <span class="team-time">${formatTime(team2Result)}</span>
+                </div>
+             </div>`;
+    html += `</div>`;
+
+    html += `</div>`;
+    return html;
+}
+
+function generateRecentResultsWithFastest(allRaces) {
+    const recent = allRaces
+        .filter(r => r.isComplete && r.results.some(p => /\d/.test(p.Result) && !p.Result.includes('race')))
+        .sort((a, b) => {
+            const aTime = Math.min(...a.results.map(p => parseTimeToSeconds(p.Result)).filter(t => t !== Infinity));
+            const bTime = Math.min(...b.results.map(p => parseTimeToSeconds(p.Result)).filter(t => t !== Infinity));
+            return bTime - aTime;
+        })
+        .slice(0, 6);
+
+    const fastest = recent.reduce((best, race) => {
+        race.results.forEach(p => {
+            const time = parseTimeToSeconds(p.Result);
+            if (time > 0 && time < best.time) {
+                best = { time, name: p.Name, race: race.name };
+            }
+        });
+        return best;
+    }, { time: Infinity, name: '', race: '' });
+
+    const fastestHtml = fastest.time !== Infinity ? `
+        <div class="no-scroll-message">
+            <p style="font-size: 1rem; opacity: 0.9;">
+                ⏱️ Snelste tijd van de dag: <strong>${fastest.name}</strong> in <em>${fastest.race}</em> met ${Math.floor(fastest.time / 60)}:${(fastest.time % 60).toFixed(1).padStart(4, '0')}
+            </p>
+        </div>
+    ` : '';
+
+    return createResultTable(recent, 'Laatste Uitslagen') + fastestHtml;
+}
+
+
+    function processData(data) {
+        const allRaces = [];
+        let currentRace = null;
+
+        data.results.forEach(item => {
+            if (item.Header) {
+                if (currentRace) allRaces.push(currentRace);
+                currentRace = { 
+                    name: item.Header, 
+                    results: [], 
+                    isComplete: !item.Header.includes('In race')
+                };
+            } else if (item.Name && currentRace) {
+                currentRace.results.push(item);
+                if (item.Result === 'In race...') {
+                    currentRace.isComplete = false;
+                }
+            }
+        });
+        if (currentRace) allRaces.push(currentRace);
+
+        // Sort results within each race
+        allRaces.forEach(race => {
+            race.results.sort((a, b) => {
+                const timeA = parseTimeToSeconds(a.Result);
+                const timeB = parseTimeToSeconds(b.Result);
+                if (timeA === Infinity && timeB === Infinity) return 0;
+                if (timeA === Infinity) return 1;
+                if (timeB === Infinity) return -1;
+                return timeA - timeB;
+            });
+        });
+
+const menuItems = [
+  {
+    id: 'recent',
+    content: generateRecentResultsWithFastest(allRaces)
+  },
+  {
+    id: 'live',
+    content: createLiveRacesContent(allRaces)
+  },
+  {
+    id: 'heats',
+    content: createResultTable(
+      allRaces.filter(r => r.name.toLowerCase().includes('voorwedstrijd')),
+      'Alle Voorwedstrijden'
+    )
+  },
+  {
+    id: 'semis',
+    content: createResultTable(
+      allRaces.filter(r => r.name.toLowerCase().includes('halve finale')),
+      'Alle Halve Finales'
+    )
+  },
+  {
+    id: 'finals',
+    content: createResultTable(
+      allRaces.filter(r => {
+        const name = r.name.toLowerCase();
+        return name.includes('finale') && !name.includes('halve');
+      }),
+      'Alle Finales'
+    )
+  },
+  {
+    id: 'knockout-4plus',
+    content: generateBracketForType('4+', allRaces)
+  },
+  {
+    id: 'knockout-1x',
+    content: generateBracketForType('1x', allRaces)
+  },
+  {
+    id: 'knockout-2x',
+    content: generateBracketForType('2x', allRaces)
+  },
+  {
+    id: 'hub',
+    content: createHubContent(allRaces)
+  }
+];
+
+
+        const navTitles = { 
+            recent: 'Recente Uitslagen', 
+            live: 'Live Races',
+            heats: 'Voorwedstrijden', 
+            semis: 'Halve Finales', 
+            finals: 'Finales', 
+            'knockout-4plus': 'Knock-out 4+', 
+            'knockout-1x': 'Knock-out 1x', 
+            'knockout-2x': 'Knock-out 2x', 
+            hub: 'Dashboard' 
+        };
+
+        // Update navigation dropdown without changing selection
+        const currentSelection = navDropdown.value;
+        navDropdown.innerHTML = Object.keys(navTitles).map(key => 
+            `<option value="${key}">${navTitles[key]}</option>`
+        ).join('');
+        navDropdown.value = currentSelection || currentTabId;
+        
+        // Update content area without visible refresh
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = menuItems.map(item => 
+            `<div id="${item.id}" class="tab-content">${item.content}</div>`
+        ).join('');
+        
+        // Replace content smoothly
+        contentArea.innerHTML = tempContainer.innerHTML;
+        
+        // Restore active tab
+        openTab(currentTabId);
+    }
+
+    async function fetchData() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            processData(data);
+        } catch (error) {
+            console.warn('Could not fetch live data. Using fallback.', error);
+            processData(fallbackData);
+        }
+    }
+    
+    // Event Listeners
+    navDropdown.addEventListener('change', (e) => {
+        currentTabId = e.target.value;
+        openTab(currentTabId);
+    });
+    
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Fullscreen not supported or failed:', err);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => {
+                    console.log('Exit fullscreen failed:', err);
+                });
+            }
+        }
+    });
+
+    // Initial Load
+    fetchData();
+    
+    // Refresh data every 10 seconds
+    setInterval(fetchData, 10000);
+</script>
+
 </body>
 </html>
+                    
