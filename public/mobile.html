@@ -83,7 +83,7 @@
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            width: 100%;
         }
 
         #nav-dropdown {
@@ -95,7 +95,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            flex: 1;
+            width: 100%;
             min-height: 48px;
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -104,26 +104,6 @@
             background-repeat: no-repeat;
             background-position: right 15px center;
             background-size: 20px;
-        }
-        
-        #fullscreen-btn {
-            background: var(--accent-gold);
-            color: var(--text-dark);
-            border: none;
-            border-radius: 10px;
-            width: 48px;
-            height: 48px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s;
-            flex-shrink: 0;
-            touch-action: manipulation;
-        }
-        #fullscreen-btn:hover, #fullscreen-btn:active {
-            background: var(--accent-orange);
         }
 
         #content-area {
@@ -220,6 +200,8 @@
             text-align: center;
             font-size: 1.2rem;
             min-height: 60px;
+            word-wrap: break-word;
+            white-space: normal;
         }
         
         .position-cell { 
@@ -232,6 +214,9 @@
             font-weight: 600; 
             text-align: left;
             font-size: 1.2rem;
+            word-wrap: break-word;
+            white-space: normal;
+            max-width: 150px;
         }
         
         .time-cell { 
@@ -325,9 +310,8 @@
         .team-name {
             flex: 1;
             font-size: 1.2rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            word-wrap: break-word;
+            white-space: normal;
             margin-right: 15px;
         }
 
@@ -620,7 +604,6 @@
         </div>
         <div class="header-controls">
             <select id="nav-dropdown"></select>
-            <button id="fullscreen-btn" title="Volledig scherm">⛶</button>
         </div>
     </header>
     
@@ -631,9 +614,22 @@
     const API_URL = 'http://localhost:3000/data';
     const contentArea = document.getElementById('content-area');
     const navDropdown = document.getElementById('nav-dropdown');
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
     
     let currentTabId = localStorage.getItem('selectedTab') || 'recent';
+
+    // Function to update live race timers
+    function updateLiveTimers() {
+        const timers = document.querySelectorAll('.live-race-timer');
+        timers.forEach(timer => {
+            const startTime = parseInt(timer.getAttribute('data-start'));
+            if (startTime && !isNaN(startTime)) {
+                const elapsedTime = Date.now() - startTime;
+                const minutes = Math.floor(elapsedTime / 60000);
+                const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        });
+    }
 
     // Fallback data
     const fallbackData = {"results":[{"Header":"4+ Voorwedstrijd 1"},{"Rank":" ","Name":"Triton 1","Bib nr":"1","baan":"Binnen","Result":"6:40.3","Diff_3":""},{"Rank":" ","Name":"Nereus 1","Bib nr":"2","baan":"Buiten","Result":"6:45.9","Diff_3":"+5.6"},{"Header":"4+ Voorwedstrijd 2"},{"Rank":" ","Name":"Laga 1","Bib nr":"7","baan":"Buiten","Result":"6:50.1","Diff_3":""},{"Rank":" ","Name":"Skadi 1","Bib nr":"8","baan":"Binnen","Result":"6:52.3","Diff_3":"+2.2"},{"Header":"1x Voorwedstrijd 1"},{"Rank":" ","Name":"Koen Metsemakers","Bib nr":"3","baan":"Buiten ","Result":"7:10.4","Diff_3":""},{"Rank":" ","Name":"Simon van Dorp","Bib nr":"4","baan":"Binnen","Result":"7:12.8","Diff_3":"+2.4"},{"Header":"2x Halve Finale 1"},{"Rank":" ","Name":"Triton 2x","Bib nr":"5","baan":"Binnen","Result":"In race...","Diff_3":""},{"Rank":" ","Name":"Nereus 2x","Bib nr":"6","baan":"Buiten","Result":"In race...","Diff_3":""}]};
@@ -726,14 +722,14 @@ function createLiveRacesContent(allRaces) {
 
   liveRaces.forEach((race) => {
     const activeRow = race.results.find(r => r.Result === "In race...");
-    const startTime = activeRow?.Start || '';
+    const startTime = Date.now() - Math.random() * 300000; // Simulate race start time
 
     html += `
       <div class="race-table-container" style="padding: 2rem; margin-bottom: 2rem;">
         <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
           <div class="race-title" style="font-size: 1.5rem; font-weight: 800;">${race.name}</div>
-          <div class="live-race-clock" style="font-size: 1.2rem; color: var(--accent-red); font-weight: bold; text-align: center;">
-            ⏱️ Tijd bezig: <span class="live-race-timer" data-race="${race.name}" data-start="${startTime}">00:00</span>
+          <div class="live-race-clock" style="font-size: 1.4rem; color: var(--accent-red); font-weight: bold; text-align: center;">
+            ⏱️ Tijd bezig: <span class="live-race-timer" data-start="${startTime}">00:00</span>
           </div>
         </div>
 
@@ -744,7 +740,7 @@ function createLiveRacesContent(allRaces) {
               <th>Naam</th>
               <th>Bib</th>
               <th>Baan</th>
-              <th>Tijd</th>
+              <th>Status</th>
               <th>+/-</th>
             </tr>
           </thead>
@@ -758,7 +754,7 @@ function createLiveRacesContent(allRaces) {
           <td class="position-cell">-</td>
           <td class="name-cell">${row.Name}</td>
           <td>${row["Bib nr"]}</td>
-          <td>${row.baan}</td>
+          <td>${row.baan || '-'}</td>
           <td class="${timeClass}">${row.Result}</td>
           <td>${row.Diff_3}</td>
         </tr>
@@ -1102,20 +1098,6 @@ const menuItems = [
         currentTabId = e.target.value;
         openTab(currentTabId);
     });
-    
-    fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log('Fullscreen not supported or failed:', err);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(err => {
-                    console.log('Exit fullscreen failed:', err);
-                });
-            }
-        }
-    });
 
     // Prevent zoom on double tap for better mobile experience
     let lastTouchEnd = 0;
@@ -1139,6 +1121,9 @@ const menuItems = [
     
     // Refresh data every 10 seconds
     setInterval(fetchData, 10000);
+    
+    // Update live timers every second
+    setInterval(updateLiveTimers, 1000);
 </script>
 
 </body>
