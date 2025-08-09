@@ -420,112 +420,73 @@
             line-height: 1.5;
         }
 
-        /* Mobile-specific responsive adjustments */
-        @media (max-width: 768px) {
+        /* Mobile-first responsive design - these styles apply by default */
+        @media screen {
             .main-container {
-                padding: 8px;
+                padding: 15px;
             }
 
             header {
-                padding: 15px;
-                gap: 12px;
-            }
-
-            .header-title .main-title {
-                font-size: 2.2rem;
-            }
-
-            .header-title .subtitle {
-                font-size: 0.9rem;
-            }
-
-            .section-header {
-                font-size: 1.8rem;
-                margin-bottom: 15px;
-                padding-bottom: 12px;
-            }
-
-            .race-title {
-                padding: 12px 15px;
-                font-size: 1rem;
-            }
-
-            .results-table th,
-            .results-table td {
-                padding: 10px 6px;
-                font-size: 0.95rem;
-            }
-
-            .position-cell {
-                font-size: 1rem;
-            }
-
-            .stat-card .stat-number {
-                font-size: 3rem;
-            }
-
-            .stat-card .stat-label {
-                font-size: 1.1rem;
-            }
-
-            .round-title {
-                font-size: 1.2rem;
-                padding: 10px;
-            }
-
-            .match {
-                padding: 12px;
-            }
-
-            .team {
-                font-size: 0.95rem;
-                min-height: 36px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header-title .main-title {
-                font-size: 2rem;
-            }
-
-            .section-header {
-                font-size: 1.6rem;
-            }
-
-            .results-table th,
-            .results-table td {
-                padding: 8px 4px;
-                font-size: 0.9rem;
-            }
-
-            .name-cell {
-                font-size: 0.9rem;
-            }
-
-            .time-cell {
-                font-size: 0.9rem;
-            }
-
-            .stat-card .stat-number {
-                font-size: 2.8rem;
-            }
-
-            .hub-card {
+                flex-direction: column;
+                gap: 15px;
                 padding: 20px;
             }
 
-            .knockout-container {
-                padding: 10px;
+            .header-title {
+                text-align: center;
+            }
+
+            .header-controls {
+                width: 100%;
+            }
+
+            .results-grid {
+                display: flex;
+                flex-direction: column;
                 gap: 20px;
+            }
+
+            .race-table-container {
+                min-height: 300px;
+                margin-bottom: 25px;
+            }
+
+            .knockout-container {
+                flex-direction: column;
+                gap: 25px;
+                padding: 15px;
+            }
+
+            .hub-container {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+                padding: 10px;
+            }
+
+            .current-races-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
             }
         }
 
-        /* Landscape orientation optimization */
-        @media (orientation: landscape) and (max-height: 600px) {
+        /* Desktop/TV optimizations - only apply on larger screens */
+        @media screen and (min-width: 1024px) {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .main-container {
+                height: 100vh;
+                padding: 15px;
+            }
+
             header {
                 flex-direction: row;
                 align-items: center;
-                padding: 12px 15px;
+                padding: 15px 20px;
                 gap: 15px;
             }
 
@@ -534,60 +495,199 @@
                 flex: 1;
             }
 
-            .header-title .main-title {
-                font-size: 1.8rem;
-                margin-bottom: 0;
-            }
-
-            .header-title .subtitle {
-                font-size: 0.8rem;
-            }
-
             .header-controls {
+                width: auto;
                 flex-shrink: 0;
             }
 
-            .section-header {
-                font-size: 1.5rem;
-                margin-bottom: 12px;
-                padding-bottom: 8px;
+            #nav-dropdown {
+                width: 220px;
+                flex: none;
+            }
+
+            #content-area {
+                overflow: hidden;
+            }
+
+            .results-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 12px;
+                overflow: hidden;
+                align-content: start;
+                padding: 5px;
+            }
+
+            .race-table-container {
+                min-height: 0;
+                max-height: calc((100vh - 220px) / 3);
+                margin-bottom: 0;
+            }
+
+            .race-title {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .results-table {
+                font-size: 0.75rem;
+            }
+
+            .results-table th {
+                font-size: 0.7rem;
+                padding: 6px 8px;
+            }
+
+            .results-table td {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+                min-height: auto;
+            }
+
+            .position-cell {
+                font-size: 0.85rem;
+            }
+
+            .name-cell {
+                font-size: 0.8rem;
+                max-width: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .time-cell {
+                font-size: 0.8rem;
+            }
+
+            .status-in-race {
+                font-size: 0.8rem;
             }
 
             .knockout-container {
                 flex-direction: row;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                overflow: hidden;
+                align-items: flex-start;
+                max-height: calc(100vh - 200px);
             }
 
             .round {
-                min-width: 200px;
-                flex-shrink: 0;
+                min-width: 180px;
+                max-width: 250px;
+                gap: 8px;
             }
-        }
 
-        /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .results-table,
-            .team,
+            .round-title {
+                font-size: 0.95rem;
+                padding: 6px;
+                margin-bottom: 10px;
+            }
+
+            .match {
+                padding: 8px;
+                margin-bottom: 6px;
+                min-height: auto;
+            }
+
+            .team {
+                font-size: 0.75rem;
+                min-height: auto;
+                padding: 4px 0;
+            }
+
+            .team-name {
+                font-size: 0.75rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: 6px;
+            }
+
+            .team-time {
+                font-size: 0.7rem;
+            }
+
+            .hub-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                max-width: 1000px;
+                margin: 0 auto;
+                align-content: center;
+            }
+
+            .hub-card {
+                padding: 20px;
+            }
+
             .stat-card .stat-number {
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+                font-size: 2.8rem;
+                margin-bottom: 8px;
+            }
+
+            .stat-card .stat-label {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+
+            .stat-card .stat-name {
+                font-size: 0.95rem;
+            }
+
+            .current-races-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                align-content: start;
+            }
+
+            .live-race-card {
+                padding: 20px;
+                min-height: auto;
+            }
+
+            .live-race-title {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+
+            .live-participant {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                min-height: auto;
+            }
+
+            .no-scroll-message {
+                padding: 30px;
+                font-size: 1.2rem;
             }
         }
 
-        /* Touch interaction improvements */
-        @media (hover: none) and (pointer: coarse) {
-            #fullscreen-btn:hover {
-                background: var(--accent-gold);
+        /* High resolution desktop displays */
+        @media screen and (min-width: 1920px) {
+            .results-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 10px;
             }
-            
-            .match:hover {
-                border-color: transparent;
+            .section-header {
+                font-size: 2rem;
             }
-            
-            .match:active {
-                border-color: var(--accent-gold);
-                transform: scale(0.98);
+        }
+
+        @media screen and (min-width: 1400px) and (max-width: 1919px) {
+            .results-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media screen and (min-width: 1200px) and (max-width: 1399px) {
+            .results-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
             }
         }
     </style>
